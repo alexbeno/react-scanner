@@ -12,8 +12,8 @@ export class AppService {
   async getData() {
     try {
       const rawSourceMap = await axios.get(
-        // 'http://127.0.0.1:3000/static/js/bundle.js.map',
-        'http://127.0.0.1:3000/main.js.map',
+        'http://127.0.0.1:3000/static/js/bundle.js.map',
+        // 'http://127.0.0.1:3000/main.js.map',
         // 'http://127.0.0.1:3000/static/js/main.chunk.js.map',
       );
 

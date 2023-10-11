@@ -58,15 +58,23 @@ export class ProjectMapFs implements ProjectMapFsInterface {
   }
 
   private getFileNameFromPath(path: string) {
-    const getFileName = path.split('/');
+    if (path) {
+      const getFileName = path.split('/');
 
-    return getFileName.at(-1);
+      return getFileName.at(-1);
+    }
+
+    return '';
   }
 
   private getFolderPathFromPath(path: string) {
-    const getFolderPath = [...path.split('/')];
-    getFolderPath.pop();
-    return getFolderPath.join('/');
+    if (path) {
+      const getFolderPath = [...path.split('/')];
+      getFolderPath.pop();
+      return getFolderPath.join('/');
+    }
+
+    return '';
   }
 
   async addToFile(path: string) {

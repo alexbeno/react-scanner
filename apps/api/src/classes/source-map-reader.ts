@@ -25,7 +25,10 @@ export class SourceMapReader implements SourceMapReaderInterface {
   async readSourceMap(): Promise<Source[]> {
     return SourceMapConsumer.with(this.rawSourceMap, null, (consumer) => {
       const sources = consumer.sources.filter(
-        (s) => !s.includes('node_modules'),
+        (s) =>
+          !s.includes('node_modules') &&
+          (!s.includes('webpack') || s.includes('webpack:///')),
+        // (!s.includes('webpack') && !s.includes('webpack:///')),
       );
 
       return sources.map((s) => ({
@@ -42,7 +45,7 @@ export class SourceMapReader implements SourceMapReaderInterface {
 
   async createProjectSource() {
     const sources = await this.readSourceMap();
-
+    console.log('souces', sources);
     const createSourcesAsync = await Promise.all(
       sources.map(
         async (s) =>

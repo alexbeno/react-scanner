@@ -45,7 +45,6 @@ export class DependenciesScanner implements DependenciesScannerInterface {
 
   async createDependenciesMap() {
     const projectmap = await await this.getProjectMap();
-    console.log('poject map', projectmap);
     if (projectmap) {
       const getDepenciesAsync = await Promise.all(
         projectmap.map(async (f) => await this.readFile(f)),

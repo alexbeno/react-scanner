@@ -46,9 +46,10 @@ export class DuplicateCodeScanner implements DuplicateCodeScannerInterface {
   }
 
   cleanPath(path: string) {
+    console.log('path', path);
     return path.includes('webpack:///')
       ? path.split('webpack:///')[1]
-      : path.split('/src/')[1];
+      : path.split('/source/')[1];
   }
 
   async scanneDuplicateCode() {
