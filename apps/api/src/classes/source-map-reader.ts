@@ -3,6 +3,7 @@ import { SourceMapConsumer } from 'source-map';
 import { Source } from '../@types/source.type';
 import { FileSystemsInterface } from './files-system/files-system';
 import { detectClones } from 'jscpd';
+import { ProjectMapFile } from '../@types/project-map.type';
 
 export interface SourceMapReaderProps {
   rawSourceMap: any;
@@ -10,7 +11,7 @@ export interface SourceMapReaderProps {
 
 export interface SourceMapReaderInterface {
   readSourceMap(): Promise<Source[]>;
-  createProjectSource(): Promise<boolean>;
+  createProjectSource(): Promise<ProjectMapFile[]>;
 }
 
 export class SourceMapReader implements SourceMapReaderInterface {
@@ -45,7 +46,6 @@ export class SourceMapReader implements SourceMapReaderInterface {
 
   async createProjectSource() {
     const sources = await this.readSourceMap();
-    console.log('souces', sources);
     const createSourcesAsync = await Promise.all(
       sources.map(
         async (s) =>
@@ -56,8 +56,8 @@ export class SourceMapReader implements SourceMapReaderInterface {
       ),
     );
 
-    await this.fs.projectMap.createFile(createSourcesAsync);
+    const files = await this.fs.projectMap.createFile(createSourcesAsync);
 
-    return true;
+    return files;
   }
 }

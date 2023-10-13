@@ -29,7 +29,10 @@ export class DependenciesScanner implements DependenciesScannerInterface {
   async readFile(file: ProjectMapFile): Promise<Dependencies | undefined> {
     const fileContent = await this.fs.source.readFile(file.path);
 
-    if (file.type === ProjectMapFileType.REACT) {
+    if (
+      file.type === ProjectMapFileType.REACT ||
+      file.type === ProjectMapFileType.SCRIPT
+    ) {
       const reactDependencies = await this.reactParser.getDependencies(
         fileContent,
         file.folder,
@@ -53,6 +56,10 @@ export class DependenciesScanner implements DependenciesScannerInterface {
       await this.fs.dependencies.createFile(
         getDepenciesAsync.filter((d) => d !== undefined),
       );
+
+      return getDepenciesAsync.filter((d) => d !== undefined);
     }
+
+    return [];
   }
 }

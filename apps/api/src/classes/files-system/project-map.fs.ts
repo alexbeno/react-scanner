@@ -8,7 +8,7 @@ import { FileSystemProps } from './files-system';
 
 export interface ProjectMapFsInterface {
   readFile(): Promise<ProjectMapFile[] | undefined>;
-  createFile(p: string[]): Promise<boolean>;
+  createFile(p: string[]): Promise<ProjectMapFile[]>;
   addToFile(path: string): Promise<boolean>;
 }
 
@@ -117,26 +117,20 @@ export class ProjectMapFs implements ProjectMapFsInterface {
     return true;
   }
 
-  async createFile(path: string[]) {
-    await fse.outputFileSync(
-      this.jsonFile.path,
-      JSON.stringify(
-        path.map((p) => {
-          const name = this.getFileNameFromPath(p);
-          const folder = this.getFolderPathFromPath(p);
-          const type = this.getTypeFromExtension(name);
-          return {
-            path: p,
-            type: type,
-            fileName: name,
-            folder: folder,
-          };
-        }),
-        null,
-        2,
-      ),
-    );
+  async createFile(path: string[]): Promise<ProjectMapFile[]> {
+    const projectFile = path.map((p) => {
+      const name = this.getFileNameFromPath(p);
+      const folder = this.getFolderPathFromPath(p);
+      const type = this.getTypeFromExtension(name);
+      return {
+        path: p,
+        type: type,
+        fileName: name,
+        folder: folder,
+      };
+    });
+    await fse.outputFileSync(this.jsonFile.path, JSON.stringify(projectFile));
 
-    return true;
+    return projectFile;
   }
 }

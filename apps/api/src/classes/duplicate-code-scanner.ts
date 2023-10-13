@@ -6,6 +6,7 @@ import { ProjectMapFile, ProjectMapFileType } from '../@types/project-map.type';
 import { FileSystemsInterface } from './files-system/files-system';
 import { ReactParser, ReactParserInterface } from './parser/React.parser';
 import { jscpd } from 'jscpd';
+import { Duplicate } from '../@types/duplicate-code.type';
 
 export interface DuplicateCodeScannerProps {
   fs: FileSystemsInterface;
@@ -46,7 +47,7 @@ export class DuplicateCodeScanner implements DuplicateCodeScannerInterface {
   }
 
   cleanPath(path: string) {
-    console.log('path', path);
+    // console.log('path', path);
     return path.includes('webpack:///')
       ? path.split('webpack:///')[1]
       : path.split('/source/')[1];
@@ -62,29 +63,30 @@ export class DuplicateCodeScanner implements DuplicateCodeScannerInterface {
       '--silent',
     ]);
 
-    await this.fs.duplicateCode.createFile(
-      clones.map((clone) => ({
-        paths: [
-          this.cleanPath(clone.duplicationA.sourceId),
-          this.cleanPath(clone.duplicationB.sourceId),
-        ],
-        codes: [
-          {
-            path: this.cleanPath(clone.duplicationA.sourceId),
-            start: clone.duplicationA.start,
-            end: clone.duplicationA.end,
-            range: clone.duplicationA.range,
-            content: clone.duplicationA.fragment,
-          },
-          {
-            path: this.cleanPath(clone.duplicationB.sourceId),
-            start: clone.duplicationB.start,
-            end: clone.duplicationB.end,
-            range: clone.duplicationB.range,
-            content: clone.duplicationB.fragment,
-          },
-        ],
-      })),
-    );
+    const formatedCode: Duplicate[] = clones.map((clone) => ({
+      paths: [
+        this.cleanPath(clone.duplicationA.sourceId),
+        this.cleanPath(clone.duplicationB.sourceId),
+      ],
+      codes: [
+        {
+          path: this.cleanPath(clone.duplicationA.sourceId),
+          start: clone.duplicationA.start,
+          end: clone.duplicationA.end,
+          range: clone.duplicationA.range,
+          content: clone.duplicationA.fragment,
+        },
+        {
+          path: this.cleanPath(clone.duplicationB.sourceId),
+          start: clone.duplicationB.start,
+          end: clone.duplicationB.end,
+          range: clone.duplicationB.range,
+          content: clone.duplicationB.fragment,
+        },
+      ],
+    }));
+    await this.fs.duplicateCode.createFile(formatedCode);
+
+    return formatedCode;
   }
 }
